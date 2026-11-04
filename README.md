@@ -4,9 +4,6 @@ I'm building a **digital twin of a robotic cell that assembles timber wall panel
 
 > Work in progress.
 
-## Why this project
-Most robot simulations I see are demos: they look convincing, but nobody uses them to make engineering decisions. I want to build the other kind: a simulation that other engineers can run without me, that stays aligned with the hardware, and that answers concrete questions (Does the stud slip in the gripper? Is the cycle time realistic? What happens if a stud is missing from the stack?).
-
 ## What I'm building
 - **The cell.** A UR10e arm, a stud stack, an assembly table with stops and a vacuum gripper, built in Isaac Sim from engineering geometry.
 - **Panel designs as input.** A wall panel is described in a small JSON file (studs, top and bottom plates, openings). A Python planner turns it into a pick-and-place sequence.
