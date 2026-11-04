@@ -34,10 +34,16 @@ docker run --rm robotic-arm:jazzy bash -c "cd /ws && colcon test --event-handler
 - `ros2_ws/src/abb_cell_description`: URDF/xacro with the hardware selector.
 - `ros2_ws/src/abb_cell_bringup`: launch file, controller configuration, trajectory check and launch test.
 - `docker/`: ROS 2 Jazzy image with ros2_control, MoveIt and the upstream ABB packages.
+- `isaac/`: URDF export, joint drive gains derived from the URDF's inertias, and the Isaac Sim script (import, self-test, ROS 2 bridge). See [isaac/README.md](isaac/README.md).
+
+Unit tests that need neither ROS nor Isaac Sim (drive gains):
+```bash
+pip install -r requirements-dev.txt && pytest
+```
 
 ## Roadmap
 1. **ABB arm in ROS 2.** ros2_control, controllers and MoveIt with a hardware selector. The trajectory check passes on mock hardware in Docker; planning through MoveIt is next.
-2. **Isaac Sim bridge.** Import the IRB 1200 (URDF → USD), set up joint drives and the OmniGraph ROS 2 bridge, and run the same trajectory check with `hardware:=isaac`. A headless Python script sets this up.
+2. **Isaac Sim bridge.** Import the IRB 1200 (URDF → USD), joint drives with gains derived from the URDF, and the OmniGraph ROS 2 bridge, set up by a headless Python script. The script and the gain tests are written; the run on a GPU is next.
 3. **CI.** GitHub Actions builds the image and runs the tests on every push.
 4. **The cell.** IRB 4600, table, stud stack and vacuum gripper; a panel JSON turned into a pick-and-place sequence.
 5. **Physics and scenarios.** Contact, friction and drive tuning; YAML scenarios (missing, warped or heavy stud, gripper failure) with pass/fail metrics.

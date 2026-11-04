@@ -15,3 +15,6 @@ datasets/
 
 # macOS
 .DS_Store
+
+# Isaac Sim build outputs (exported URDF, meshes, USD, results)
+isaac/build/
