@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+  ABB IRB 1200-5/0.9 for the cell.
+
+  The `hardware` argument picks the ros2_control plugin; everything above it
+  (controllers, MoveIt, my code) is the same in all three cases:
+    mock  - mock_components/GenericSystem: commands are copied to states (laptop, CI)
+    isaac - topic_based_ros2_control/TopicBasedSystem: talks to Isaac Sim over ROS 2 topics
+    real  - abb_hardware_interface/ABBSystemHardware: the real controller over EGM
+
+  The robot name matches the upstream MoveIt config's SRDF.
+-->
+<robot name="abb_irb1200_5_90" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:arg name="hardware" default="mock"/>
+  <xacro:arg name="rws_ip" default="None"/>
+  <xacro:arg name="rws_port" default="80"/>
+
+  <xacro:include filename="$(find abb_irb1200_support)/urdf/irb1200_5_90_macro.xacro"/>
+  <xacro:include filename="$(find abb_cell_description)/urdf/abb_cell.ros2_control.xacro"/>
+
+  <xacro:abb_irb1200_5_90 prefix=""/>
+
+  <xacro:abb_cell_ros2_control
+    hardware="$(arg hardware)"
+    rws_ip="$(arg rws_ip)"
+    rws_port="$(arg rws_port)"/>
+</robot>

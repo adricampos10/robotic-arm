@@ -1,0 +1,30 @@
+# Same controllers for mock hardware, Isaac Sim and the real robot.
+controller_manager:
+  ros__parameters:
+    # Isaac Sim's physics runs at 60 Hz by default; a faster loop would only
+    # re-send the same command between physics steps.
+    update_rate: 100  # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_trajectory_controller:
+  ros__parameters:
+    joints: [joint_1, joint_2, joint_3, joint_4, joint_5, joint_6]
+    command_interfaces: [position]
+    state_interfaces: [position, velocity]
+    allow_partial_joints_goal: false
+    # A simulated or real arm lags the command a little: allow up to 1 s
+    # after the trajectory ends to settle within 0.01 rad of the goal.
+    constraints:
+      goal_time: 1.0
+      stopped_velocity_tolerance: 0.05
+      joint_1: {goal: 0.01}
+      joint_2: {goal: 0.01}
+      joint_3: {goal: 0.01}
+      joint_4: {goal: 0.01}
+      joint_5: {goal: 0.01}
+      joint_6: {goal: 0.01}

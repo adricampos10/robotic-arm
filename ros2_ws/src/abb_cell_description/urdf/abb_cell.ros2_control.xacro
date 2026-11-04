@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- One joint: position command, position and velocity state. The real
+       robot's EGM interface also takes a velocity command. -->
+  <xacro:macro name="abb_cell_joint" params="name hardware">
+    <joint name="${name}">
+      <command_interface name="position"/>
+      <xacro:if value="${hardware == 'real'}">
+        <command_interface name="velocity"/>
+      </xacro:if>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="velocity">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="abb_cell_ros2_control" params="hardware rws_ip:=None rws_port:=80">
+    <xacro:if value="${hardware not in ['mock', 'isaac', 'real']}">
+      ${xacro.fatal('hardware must be mock, isaac or real, got: ' + hardware)}
+    </xacro:if>
+
+    <ros2_control name="abb_irb1200" type="system">
+      <hardware>
+        <xacro:if value="${hardware == 'mock'}">
+          <plugin>mock_components/GenericSystem</plugin>
+        </xacro:if>
+
+        <!-- Isaac Sim publishes the articulation's joint states and
+             subscribes to joint commands (OmniGraph ROS 2 bridge). -->
+        <xacro:if value="${hardware == 'isaac'}">
+          <plugin>topic_based_ros2_control/TopicBasedSystem</plugin>
+          <param name="joint_commands_topic">/isaac_joint_commands</param>
+          <param name="joint_states_topic">/isaac_joint_states</param>
+        </xacro:if>
+
+        <xacro:if value="${hardware == 'real'}">
+          <plugin>abb_hardware_interface/ABBSystemHardware</plugin>
+          <param name="rws_ip">${rws_ip}</param>
+          <param name="rws_port">${rws_port}</param>
+          <param name="configure_via_rws">true</param>
+          <param name="egm_port">6511</param>
+        </xacro:if>
+      </hardware>
+
+      <xacro:abb_cell_joint name="joint_1" hardware="${hardware}"/>
+      <xacro:abb_cell_joint name="joint_2" hardware="${hardware}"/>
+      <xacro:abb_cell_joint name="joint_3" hardware="${hardware}"/>
+      <xacro:abb_cell_joint name="joint_4" hardware="${hardware}"/>
+      <xacro:abb_cell_joint name="joint_5" hardware="${hardware}"/>
+      <xacro:abb_cell_joint name="joint_6" hardware="${hardware}"/>
+    </ros2_control>
+  </xacro:macro>
+
+</robot>
